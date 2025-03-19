@@ -4,6 +4,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { RegisterMutation } from '../graphql/mutations/userMutations';
 import toast from 'react-hot-toast';
+import { Authenticate } from '../graphql/query/userQuery';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -15,15 +16,8 @@ const Register = () => {
     password1: ''
   });
 
-  // If a token exists, redirect immediately to home.
-  const token = localStorage.getItem('token');
-  if (token) {
-    return <Navigate to='/' replace />;
-  }
-
   const [register, { loading }] = useMutation(RegisterMutation, {
-    // Optionally refetch authentication queries if needed.
-    // refetchQueries: [{ query: Authenticate }],
+    refetchQueries: [{ query: Authenticate }],
   });
 
   const handleChange = (e) => {
@@ -105,7 +99,7 @@ const Register = () => {
                 required
               />
               <InputField
-                label='Phone'
+                label='Phone (M-PESA)'
                 id='phone'
                 name='phone'
                 type='number'

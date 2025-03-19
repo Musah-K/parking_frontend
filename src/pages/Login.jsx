@@ -27,12 +27,6 @@ const Login = () => {
 			const {data} =await login({
 				variables: { input:{ ...signUpData, phone: sanitizedPhone }},
 			});
-
-			if (data?.authUser?.token) {
-				localStorage.setItem('token', data.authUser.token); 
-				navigate('/dashboard');
-			  }
-			console.log(data)
 			navigate('/')
 			toast.success("User logged in successifully.")
 		} catch (err) {
