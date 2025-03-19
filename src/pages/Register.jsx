@@ -1,34 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import InputField from '../components/InputField';
-import RadioButton from '../components/RadioButton';
-import { Link, useNavigate,Navigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { RegisterMutation } from '../graphql/mutations/userMutations';
 import toast from 'react-hot-toast';
-import { Authenticate } from '../graphql/query/userQuery';
 
 const Register = () => {
   const navigate = useNavigate();
-
   const [signUpData, setSignUpData] = useState({
     name: '',
     phone: '',
+    vehicle: '',
     password: '',
-	password1: ''
+    password1: ''
   });
 
-  const [register, { data,loading }] = useMutation(RegisterMutation, { refetchQueries: [{ query: Authenticate }],
-	});
+  // If a token exists, redirect immediately to home.
+  const token = localStorage.getItem('token');
+  if (token) {
+    return <Navigate to='/' replace />;
+  }
 
-	useEffect(() => {
-		const token = localStorage.getItem('token');
-  		!token ? "" : <Navigate to='/' />;
-		
-	}, [data, navigate,Navigate]);
+  const [register, { loading }] = useMutation(RegisterMutation, {
+    // Optionally refetch authentication queries if needed.
+    // refetchQueries: [{ query: Authenticate }],
+  });
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
-
+    // If you ever need to handle radios:
     if (type === 'radio') {
       setSignUpData((prevData) => ({
         ...prevData,
@@ -43,29 +43,35 @@ const Register = () => {
   };
 
   const sanitizePhoneNumber = (phone) => {
-	if (phone.startsWith('0')) {
-		return parseInt(phone.slice(1), 10);
-	} else if (phone.startsWith('+254')) {
-		return parseInt(phone.slice(4), 10);
-	} else if (phone.startsWith('254')) {
-		return parseInt(phone.slice(3), 10); 
-	}
-	return parseInt(phone, 10);
-};
+    if (phone.startsWith('0')) {
+      return parseInt(phone.slice(1), 10);
+    } else if (phone.startsWith('+254')) {
+      return parseInt(phone.slice(4), 10);
+    } else if (phone.startsWith('254')) {
+      return parseInt(phone.slice(3), 10);
+    }
+    return parseInt(phone, 10);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-	if(signUpData.password !== signUpData.password1) toast.error("Password does not match")
+    if (signUpData.password !== signUpData.password1) {
+      return toast.error("Password does not match");
+    }
 
     try {
       const sanitizedPhone = sanitizePhoneNumber(signUpData.phone);
-
       const { data } = await register({
         variables: {
-          input: { name: signUpData.name, phone: parseInt(sanitizedPhone, 10), password: signUpData.password },
+          input: {
+            name: signUpData.name,
+            phone: sanitizedPhone,
+            password: signUpData.password,
+            vehicle: signUpData.vehicle,
+          },
         },
       });
-	  console.log(data)
+      console.log(data);
 
       if (data?.register?.token) {
         toast.success('Successfully registered!');
@@ -90,7 +96,6 @@ const Register = () => {
             </h1>
 
             <form className='space-y-4' onSubmit={handleSubmit}>
-   
               <InputField
                 label='Name'
                 id='name'
@@ -108,7 +113,14 @@ const Register = () => {
                 value={signUpData.phone}
                 required
               />
-
+              <InputField
+                label='Vehicle no.'
+                id='vehicle'
+                name='vehicle'
+                type='text'
+                onChange={handleChange}
+                value={signUpData.vehicle}
+              />
               <InputField
                 label='Password'
                 id='password'
@@ -118,16 +130,15 @@ const Register = () => {
                 value={signUpData.password}
                 required
               />
-
-				<InputField
-					label='Confirm password'
-					id='password1'
-					name='password1'
-					type='password'
-					onChange={handleChange}
-					value={signUpData.password1}
-					required
-              	/>
+              <InputField
+                label='Confirm password'
+                id='password1'
+                name='password1'
+                type='password'
+                onChange={handleChange}
+                value={signUpData.password1}
+                required
+              />
 
               <button
                 type='submit'
