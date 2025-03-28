@@ -23,7 +23,7 @@ const Footer = () => {
         <h3 className="text-lg font-semibold mb-2">Developer Contact</h3>
         <p className="flex items-center justify-center gap-2">
           <IoMailUnreadOutline className="text-blue-400" />
-          <a href="mailto:moscode@gmail.com" className="text-blue-400 hover:underline">moscode@gmail.com</a>
+          <a href="mailto:mosscode101@gmail.com" className="text-blue-400 hover:underline">mosscode101@gmail.com</a>
         </p>
         <p className="flex items-center justify-center gap-2 mt-2">
           <FaWhatsapp className="text-green-400" />
