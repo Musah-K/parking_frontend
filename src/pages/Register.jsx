@@ -49,6 +49,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(signUpData.phone.toString().length < 9) return toast.error("Phone length too small.")
     if (signUpData.password !== signUpData.password1) {
       return toast.error("Password does not match");
     }

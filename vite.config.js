@@ -9,6 +9,7 @@ export default defineConfig({
     proxy: {
       '/graphql': {
         target: 'https://parkingbackend-production-dff7.up.railway.app/graphql',
+        // target: 'http://localhost:3001/graphql',
         changeOrigin: true,
       },
     },

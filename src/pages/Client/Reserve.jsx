@@ -120,7 +120,7 @@ const Reserve = ({ refetch, onClose }) => {
               <span className="text-lg font-semibold">
                 <FaCoins /> Total:
               </span>
-              <span className="text-xl font-bold">{days * 1} KES</span>
+              <span className="text-xl font-bold">KSH. {days > 30 ?days * 250: days * 300}</span>
             </div>
           </div>
 

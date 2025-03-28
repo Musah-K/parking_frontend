@@ -12,3 +12,16 @@ import { gql } from "@apollo/client";
   }
  }
 `
+
+export const ALLUSERS = gql`
+    query AllUsers {
+        allUsers {
+            _id
+            name
+            admin
+            role
+            vehicle
+            phone
+        }
+}
+`

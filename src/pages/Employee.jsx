@@ -1,8 +1,11 @@
 import React from 'react'
+import { Outlet } from 'react-router-dom'
 
 const Employee = () => {
   return (
-    <div>Employee</div>
+    <div>
+      <Outlet />
+    </div>
   )
 }
 

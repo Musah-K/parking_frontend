@@ -13,6 +13,13 @@ import Admin from "./pages/Admin";
 import { UpdateExpired } from "./graphql/mutations/parkingSlotsMutation";
 import Reserved from "./pages/Client/Reserved";
 import Reserve from "./pages/Client/Reserve";
+import Dashbord from "./pages/admin/Dashbord";
+import Employees from "./pages/admin/Employees";
+import Bookings from "./pages/admin/Bookings";
+import Clients from "./pages/admin/Clients";
+import Loading from "./components/Loading";
+import EmployeeDashbord from "./pages/employee/EmployeeDashbord";
+import RegisterNewUser from "./pages/employee/RegisterNewUser";
 
 function App() {
   const [removeExpiredSlots] = useMutation(UpdateExpired);
@@ -34,7 +41,7 @@ function App() {
     fetchPolicy: "network-only",
   });
 
-  if (loadingUser) return <div>Loading...</div>;
+  if (loadingUser) return <Loading />;
 
   // Determine if the user is authenticated
   const isAuthenticated = !!userData?.authUser;
@@ -49,7 +56,9 @@ function App() {
         />
         <Route
           path="/register"
-          element={!isAuthenticated ? <Register /> : <Navigate to="/" replace />}
+          element={
+            !isAuthenticated ? <Register /> : <Navigate to="/" replace />
+          }
         />
 
         {/* Private route */}
@@ -63,15 +72,25 @@ function App() {
             )
           }
         >
-          {userData?.authUser?.role === "user" ? (
+          {userData?.authUser?.role === "client" ? (
             <Route element={<Client user={userData.authUser} />}>
               <Route index element={<Reserved />} />
               <Route path="reserve" element={<Reserve />} />
             </Route>
           ) : userData?.authUser?.role === "worker" ? (
-            <Route index element={<Employee />} />
+            <Route element={<Employee />} >
+              <Route index element={<EmployeeDashbord />}  />
+              <Route path="addnewuser" element={<RegisterNewUser />} />
+            </Route>
+          ) : userData?.authUser?.role === "admin" ? (
+            <Route path="/" element={<Admin />}>
+              <Route index element={<Dashbord />} />
+              <Route path="employees" element={<Employees/>}/>
+              <Route path="bookings" element={<Bookings />}/>
+              <Route path="clients" element={<Clients />} />
+            </Route>
           ) : (
-            <Route index element={<Admin />} />
+            <Route index element={<Navigate to="/unauthorized" />} />
           )}
         </Route>
 
